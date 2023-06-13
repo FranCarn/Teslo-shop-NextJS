@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import React, { FC } from "react";
-import { initialData } from "../../database/products";
 import { IProduct } from "../../interfaces";
 import { ProductCard } from "./ProductCard";
 interface Props {
