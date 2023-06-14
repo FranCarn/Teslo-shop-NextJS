@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db, SHOP_CONTANTS } from "../../../database";
+import { db } from "../../../database";
 import { Product } from "../../../models";
 import { IProduct } from "../../../interfaces";
 
@@ -15,23 +15,27 @@ export default function handler(
 ) {
   switch (req.method) {
     case "GET":
-      return getProducts(req, res);
+      return searchProducts(req, res);
 
     default:
       return res.status(400).json({ message: "Bad request" });
   }
 }
+const searchProducts = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  let { query } = req.query;
 
-const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { gender = "all" } = req.query;
-  let condition = {};
-  if (gender !== "all" && SHOP_CONTANTS.validGenders.includes(`${gender}`)) {
-    condition = { gender };
-  }
+  if (!query) return res.status(400).json({ message: "Query is empty" });
+
+  query = query.toString().toLowerCase();
+
   await db.connect();
-  const products = await Product.find(condition)
+  const products = await Product.find({ $text: { $search: query } })
     .select("title images price inStock slug -_id")
     .lean();
   await db.disconnect();
+
   return res.json(products);
 };

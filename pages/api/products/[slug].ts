@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db, SHOP_CONTANTS } from "../../../database";
-import { Product } from "../../../models";
 import { IProduct } from "../../../interfaces";
+import { db } from "../../../database";
+import { Product } from "../../../models";
 
 type Data =
   | {
       message: string;
     }
-  | IProduct[];
+  | IProduct;
 
 export default function handler(
   req: NextApiRequest,
@@ -15,23 +15,23 @@ export default function handler(
 ) {
   switch (req.method) {
     case "GET":
-      return getProducts(req, res);
+      return getProductBySlug(req, res);
 
     default:
       return res.status(400).json({ message: "Bad request" });
   }
 }
-
-const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { gender = "all" } = req.query;
-  let condition = {};
-  if (gender !== "all" && SHOP_CONTANTS.validGenders.includes(`${gender}`)) {
-    condition = { gender };
-  }
+const getProductBySlug = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { slug } = req.query;
   await db.connect();
-  const products = await Product.find(condition)
+  const product = await Product.findOne({ slug })
     .select("title images price inStock slug -_id")
     .lean();
   await db.disconnect();
-  return res.json(products);
+  if (!product)
+    return res.status(404).json({ message: "The product does not exist" });
+  return res.json(product);
 };
