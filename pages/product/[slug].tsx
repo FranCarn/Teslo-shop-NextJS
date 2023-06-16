@@ -44,14 +44,13 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             {/* Add to cart */}
 
-            <Button color="secondary" className="circular-btn">
-              Add to cart
-            </Button>
-
-            {/* // TODO: hacer el ternario para que se muestre uno o otro  */}
-
-            {/* <Chip label="Out of stock" color="error" variant="outlined" />
-             */}
+            {product.inStock ? (
+              <Button color="secondary" className="circular-btn">
+                Add to cart
+              </Button>
+            ) : (
+              <Chip label="Out of stock" color="error" variant="outlined" />
+            )}
 
             {/* Description */}
             <Box sx={{ mt: 3 }}>
