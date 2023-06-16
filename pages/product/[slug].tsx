@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { NextPage, GetStaticPaths, GetStaticProps } from "next";
 import { ShopLayout } from "../../components/layouts";
 import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 import { ProductSlideshow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { IProduct } from "../../interfaces";
+import { ICartProduct, IProduct, ISize } from "../../interfaces";
 import { dbProducts } from "../../database";
 
 interface Props {
@@ -12,6 +12,21 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+  const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+    _id: product._id,
+    images: product.images[0],
+    price: product.price,
+    size: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+    quantity: 1,
+  });
+
+  const onSelectedSize = (size: ISize) => {
+    setTempCartProduct((prevState) => ({ ...prevState, size }));
+  };
+
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -37,7 +52,8 @@ const ProductPage: NextPage<Props> = ({ product }) => {
               <Typography variant="subtitle2">Amount</Typography>
               <ItemCounter />
               <SizeSelector
-                selectedSize={product.sizes[3]}
+                selectedSize={tempCartProduct.size}
+                onSelectedSize={onSelectedSize}
                 sizes={product.sizes}
               />
             </Box>
@@ -46,7 +62,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             {product.inStock ? (
               <Button color="secondary" className="circular-btn">
-                Add to cart
+                {tempCartProduct.size ? "Add to cart" : "Choose a size"}
               </Button>
             ) : (
               <Chip label="Out of stock" color="error" variant="outlined" />
