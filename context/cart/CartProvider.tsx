@@ -25,7 +25,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         : [];
       dispatch({
         type: "[CART] - LoadCart from Cookies",
-        payload: cookieProducts,
+        payload: [...cookieProducts],
       });
     } catch (err) {
       dispatch({
@@ -70,8 +70,15 @@ export const CartProvider: FC<Props> = ({ children }) => {
         payload: updatedProducts,
       });
   };
+
+  const updateCartQuantity = (product: ICartProduct) => {
+    dispatch({ type: "[CART] - Change product quantity", payload: product });
+  };
+
   return (
-    <CartContext.Provider value={{ ...state, addProductToCart }}>
+    <CartContext.Provider
+      value={{ ...state, addProductToCart, updateCartQuantity }}
+    >
       {children}
     </CartContext.Provider>
   );

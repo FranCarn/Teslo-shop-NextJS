@@ -11,18 +11,34 @@ import {
 import NextLink from "next/link";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context";
+import { ICartProduct } from "../../interfaces";
 
 interface Props {
   editable?: boolean;
 }
 export const CartList: FC<Props> = ({ editable = false }) => {
-  const { cart } = useContext(CartContext);
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const onNewCartQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number
+  ) => {
+    if (newQuantityValue > 5 || !newQuantityValue) return;
+    product.quantity = newQuantityValue;
+    updateCartQuantity(product);
+  };
+
   return (
     <>
       {cart.map((product) => (
-        <Grid container key={product.slug} spacing={2} sx={{ mb: 1 }}>
+        <Grid
+          container
+          key={product.slug + product.size}
+          spacing={2}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
-            <NextLink href="/product/slug" passHref legacyBehavior>
+            <NextLink href={`/product/${product.slug}`} passHref legacyBehavior>
               <Link>
                 <CardActionArea>
                   <CardMedia
@@ -43,10 +59,14 @@ export const CartList: FC<Props> = ({ editable = false }) => {
               {editable ? (
                 <ItemCounter
                   quantity={product.quantity}
-                  onSelectedQuantity={() => {}}
+                  onSelectedQuantity={(value) =>
+                    onNewCartQuantityValue(product, value)
+                  }
                 />
               ) : (
-                <Typography variant="subtitle1">{product.quantity}</Typography>
+                <Typography variant="subtitle1">
+                  {product.quantity} products
+                </Typography>
               )}
             </Box>
           </Grid>
