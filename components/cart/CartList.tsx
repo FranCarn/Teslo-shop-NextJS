@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import {
   Box,
   Button,
@@ -8,29 +8,25 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { initialData } from "../../database/products";
 import NextLink from "next/link";
 import { ItemCounter } from "../ui";
+import { CartContext } from "../../context";
 
-const ProductsInCart = [
-  initialData.products[0],
-  initialData.products[9],
-  initialData.products[2],
-];
 interface Props {
   editable?: boolean;
 }
 export const CartList: FC<Props> = ({ editable = false }) => {
+  const { cart } = useContext(CartContext);
   return (
     <>
-      {ProductsInCart.map((product) => (
+      {cart.map((product) => (
         <Grid container key={product.slug} spacing={2} sx={{ mb: 1 }}>
           <Grid item xs={3}>
             <NextLink href="/product/slug" passHref legacyBehavior>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images[0]}`}
+                    image={`/products/${product.images}`}
                     component="img"
                     sx={{ borderRadius: "5px" }}
                   />
@@ -42,12 +38,15 @@ export const CartList: FC<Props> = ({ editable = false }) => {
             <Box display="flex" flexDirection="column">
               <Typography variant="body1">{product.title}</Typography>
               <Typography variant="body1">
-                Size: <strong> M </strong>
+                Size: <strong>{product.size}</strong>
               </Typography>
               {editable ? (
-                <ItemCounter />
+                <ItemCounter
+                  quantity={product.quantity}
+                  onSelectedQuantity={() => {}}
+                />
               ) : (
-                <Typography variant="subtitle1">3 items</Typography>
+                <Typography variant="subtitle1">{product.quantity}</Typography>
               )}
             </Box>
           </Grid>
