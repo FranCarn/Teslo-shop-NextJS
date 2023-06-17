@@ -25,13 +25,10 @@ export const CartProvider: FC<Props> = ({ children }) => {
         : [];
       dispatch({
         type: "[CART] - LoadCart from Cookies",
-        payload: [...cookieProducts],
+        payload: cookieProducts,
       });
-    } catch (err) {
-      dispatch({
-        type: "[CART] - LoadCart from Cookies",
-        payload: [],
-      });
+    } catch (error) {
+      dispatch({ type: "[CART] - LoadCart from Cookies", payload: [] });
     }
   }, []);
 
@@ -75,9 +72,18 @@ export const CartProvider: FC<Props> = ({ children }) => {
     dispatch({ type: "[CART] - Change product quantity", payload: product });
   };
 
+  const removeCartProduct = (product: ICartProduct) => {
+    dispatch({ type: "[CART] - Remove product in cart", payload: product });
+  };
+
   return (
     <CartContext.Provider
-      value={{ ...state, addProductToCart, updateCartQuantity }}
+      value={{
+        ...state,
+        addProductToCart,
+        updateCartQuantity,
+        removeCartProduct,
+      }}
     >
       {children}
     </CartContext.Provider>

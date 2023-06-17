@@ -7,7 +7,8 @@ type UiActionType =
       payload: ICartProduct[];
     }
   | { type: "[CART] - Add Product"; payload: ICartProduct[] }
-  | { type: "[CART] - Change product quantity"; payload: ICartProduct };
+  | { type: "[CART] - Change product quantity"; payload: ICartProduct }
+  | { type: "[CART] - Remove product in cart"; payload: ICartProduct };
 
 export const cartReducer = (
   state: CartInitialState,
@@ -17,7 +18,7 @@ export const cartReducer = (
     case "[CART] - LoadCart from Cookies":
       return {
         ...state,
-        cart: action.payload,
+        cart: [...action.payload],
       };
     case "[CART] - Add Product":
       return {
@@ -32,6 +33,17 @@ export const cartReducer = (
           if (product.size !== action.payload.size) return product;
           return action.payload;
         }),
+      };
+    case "[CART] - Remove product in cart":
+      return {
+        ...state,
+        cart: state.cart.filter(
+          (product) =>
+            !(
+              product._id === action.payload._id &&
+              product.size === action.payload.size
+            )
+        ),
       };
     default:
       return state;
