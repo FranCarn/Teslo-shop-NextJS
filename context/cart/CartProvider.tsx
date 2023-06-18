@@ -5,6 +5,10 @@ import Cookie from "js-cookie";
 
 export interface CartInitialState {
   cart: ICartProduct[];
+  numberOfItems: number;
+  subTotal: number;
+  tax: number;
+  totalPrice: number;
 }
 
 interface Props {
@@ -13,6 +17,10 @@ interface Props {
 
 const INITIAL_STATE: CartInitialState = {
   cart: [],
+  numberOfItems: 0,
+  subTotal: 0,
+  tax: 0,
+  totalPrice: 0,
 };
 
 export const CartProvider: FC<Props> = ({ children }) => {
@@ -34,6 +42,25 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     Cookie.set("cart", JSON.stringify(state.cart));
+  }, [state.cart]);
+
+  useEffect(() => {
+    const numberOfItems = state.cart.reduce(
+      (prev, current) => current.quantity + prev,
+      0
+    );
+    const subTotal = state.cart.reduce(
+      (prev, current) => current.price * current.quantity + prev,
+      0
+    );
+    const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
+    const orderSumary = {
+      numberOfItems,
+      subTotal,
+      tax: subTotal * taxRate,
+      totalPrice: subTotal * (taxRate + 1),
+    };
+    dispatch({ type: "[CART] - Update Order Summary", payload: orderSumary });
   }, [state.cart]);
 
   const addProductToCart = (product: ICartProduct) => {

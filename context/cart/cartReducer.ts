@@ -8,7 +8,16 @@ type UiActionType =
     }
   | { type: "[CART] - Add Product"; payload: ICartProduct[] }
   | { type: "[CART] - Change product quantity"; payload: ICartProduct }
-  | { type: "[CART] - Remove product in cart"; payload: ICartProduct };
+  | { type: "[CART] - Remove product in cart"; payload: ICartProduct }
+  | {
+      type: "[CART] - Update Order Summary";
+      payload: {
+        numberOfItems: number;
+        subTotal: number;
+        tax: number;
+        totalPrice: number;
+      };
+    };
 
 export const cartReducer = (
   state: CartInitialState,
@@ -44,6 +53,11 @@ export const cartReducer = (
               product.size === action.payload.size
             )
         ),
+      };
+    case "[CART] - Update Order Summary":
+      return {
+        ...state,
+        ...action.payload,
       };
     default:
       return state;
