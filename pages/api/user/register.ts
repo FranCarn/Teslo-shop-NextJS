@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { User } from "../../../models";
 import bcrypt from "bcryptjs";
-import { jwt } from "../../../utils";
+import { jwt, validation } from "../../../utils";
 
 type Data =
   | {
@@ -43,6 +43,10 @@ async function registerUser(req: NextApiRequest, res: NextApiResponse<Data>) {
       .status(400)
       .json({ message: "Name must be more than 6 characters." });
   }
+  if (!validation.isValidEmail(email)) {
+    return res.status(400).json({ message: "Invalid email" });
+  }
+
   await db.connect();
   const user = await User.findOne({
     email,
