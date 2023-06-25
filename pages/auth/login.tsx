@@ -4,6 +4,7 @@ import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { validation } from "../../utils";
+import { tesloApi } from "../../api";
 
 type FormData = {
   email: string;
@@ -16,7 +17,17 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const onLoginUser = (data: FormData) => {};
+
+  const onLoginUser = async (loginData: FormData) => {
+    try {
+      const { data } = await tesloApi.post("/user/login", loginData);
+      const { token, user } = data;
+    } catch (error) {
+      console.log(error);
+      console.log("Invalid credentials");
+    }
+  };
+
   return (
     <AuthLayout title="Login">
       <form onSubmit={handleSubmit(onLoginUser)} noValidate>
