@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { AuthLayout } from "../../components/layouts";
-import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { validation } from "../../utils";
 import { tesloApi } from "../../api";
+import { ErrorOutline } from "@mui/icons-material";
 
 type FormData = {
   email: string;
@@ -17,14 +26,17 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-
+  const [showError, setShowError] = useState(false);
   const onLoginUser = async (loginData: FormData) => {
+    setShowError(false);
     try {
       const { data } = await tesloApi.post("/user/login", loginData);
       const { token, user } = data;
     } catch (error) {
-      console.log(error);
-      console.log("Invalid credentials");
+      setShowError(true);
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
     }
   };
 
@@ -37,6 +49,14 @@ const LoginPage = () => {
               <Typography variant="h1" component="h1">
                 Sign in
               </Typography>
+
+              <Chip
+                label="Incorrect credentials"
+                color="error"
+                icon={<ErrorOutline />}
+                className="fadeIn"
+                sx={{ display: showError ? "flex" : "none" }}
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField
