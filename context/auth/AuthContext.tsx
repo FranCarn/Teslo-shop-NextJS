@@ -13,6 +13,7 @@ interface ContextProps {
     hasError: boolean;
     message?: string;
   }>;
+  checkToken: () => Promise<void>;
 }
 
 export const AuthContext = createContext({} as ContextProps);
