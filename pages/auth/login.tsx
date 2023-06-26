@@ -12,7 +12,6 @@ import {
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { validation } from "../../utils";
-import { tesloApi } from "../../api";
 import { ErrorOutline } from "@mui/icons-material";
 import { AuthContext } from "../../context";
 import { useRouter } from "next/router";
