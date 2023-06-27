@@ -24,6 +24,7 @@ type FormData = {
 
 const RegisterPage = () => {
   const router = useRouter();
+  const destination = router.query.p?.toString() || "/";
   const { registerUser } = useContext(AuthContext);
   const {
     register,
@@ -43,7 +44,7 @@ const RegisterPage = () => {
       }, 3000);
       return;
     }
-    router.replace("/");
+    router.replace(destination);
   };
   return (
     <AuthLayout title="Register">
@@ -115,7 +116,11 @@ const RegisterPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="center">
-              <NextLink href="/auth/login" passHref legacyBehavior>
+              <NextLink
+                href={`/auth/login?p=${destination}`}
+                passHref
+                legacyBehavior
+              >
                 <Link underline="always">Already have an account?</Link>
               </NextLink>
             </Grid>

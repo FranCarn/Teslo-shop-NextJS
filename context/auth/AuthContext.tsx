@@ -14,6 +14,7 @@ interface ContextProps {
     message?: string;
   }>;
   checkToken: () => Promise<void>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext({} as ContextProps);
