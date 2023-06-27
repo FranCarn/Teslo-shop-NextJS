@@ -24,23 +24,12 @@ import {
   VpnKeyOutlined,
 } from "@mui/icons-material";
 import { useContext, useState } from "react";
-import { UiContext } from "../../context";
+import { AuthContext, UiContext } from "../../context";
 import { useRouter } from "next/router";
-
-// TODO: crear obj para mapear todas con prop de si tiene q ser responsive o no para opt men wom kids. y crear array para las opt de adm
-const ListTitlesText = [
-  "Profile",
-  "My Orders",
-  "Men",
-  "Women",
-  "Kids",
-  "Sign In",
-  "Sign Out",
-];
 
 export const Sidemenu = () => {
   const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
-
+  const { isLoggedIn, user } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
 
   const router = useRouter();
@@ -81,20 +70,22 @@ export const Sidemenu = () => {
               }
             />
           </ListItem>
-
-          <ListItem button>
-            <ListItemIcon>
-              <AccountCircleOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"Profile"} />
-          </ListItem>
-
-          <ListItem button>
-            <ListItemIcon>
-              <ConfirmationNumberOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"My Orders"} />
-          </ListItem>
+          {isLoggedIn && (
+            <>
+              <ListItem button>
+                <ListItemIcon>
+                  <AccountCircleOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"Profile"} />
+              </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <ConfirmationNumberOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"My Orders"} />
+              </ListItem>
+            </>
+          )}
 
           <ListItem
             button
@@ -128,44 +119,49 @@ export const Sidemenu = () => {
             </ListItemIcon>
             <ListItemText primary={"Kids"} />
           </ListItem>
+          {!isLoggedIn ? (
+            <ListItem button>
+              <ListItemIcon>
+                <VpnKeyOutlined />
+              </ListItemIcon>
+              <ListItemText primary={"Sign In"} />
+            </ListItem>
+          ) : (
+            <ListItem button>
+              <ListItemIcon>
+                <LoginOutlined />
+              </ListItemIcon>
+              <ListItemText primary={"Sign Out"} />
+            </ListItem>
+          )}
 
-          <ListItem button>
-            <ListItemIcon>
-              <VpnKeyOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"Sign In"} />
-          </ListItem>
+          {user?.role === "admin" && (
+            <>
+              {/* Admin */}
+              <Divider />
+              <ListSubheader>Admin Panel</ListSubheader>
 
-          <ListItem button>
-            <ListItemIcon>
-              <LoginOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"Sign Out"} />
-          </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <CategoryOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"Products"} />
+              </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <ConfirmationNumberOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"Orders"} />
+              </ListItem>
 
-          {/* Admin */}
-          <Divider />
-          <ListSubheader>Admin Panel</ListSubheader>
-
-          <ListItem button>
-            <ListItemIcon>
-              <CategoryOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"Products"} />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <ConfirmationNumberOutlined />
-            </ListItemIcon>
-            <ListItemText primary={"Orders"} />
-          </ListItem>
-
-          <ListItem button>
-            <ListItemIcon>
-              <AdminPanelSettings />
-            </ListItemIcon>
-            <ListItemText primary={"Users"} />
-          </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <AdminPanelSettings />
+                </ListItemIcon>
+                <ListItemText primary={"Users"} />
+              </ListItem>
+            </>
+          )}
         </List>
       </Box>
     </Drawer>
