@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { ShopLayout } from "../../components/layouts";
 import {
   Box,
@@ -10,8 +10,21 @@ import {
   Typography,
 } from "@mui/material";
 import { CartList, OrderSummary } from "../../components/cart";
+import { CartContext } from "../../context";
+import { useRouter } from "next/router";
 
 const CartPage = () => {
+  const { isLoaded, cart } = useContext(CartContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !cart.length) {
+      router.replace("/cart/empty");
+    }
+  }, [isLoaded, cart, router]);
+
+  if (!isLoaded || !cart.length) return <></>;
+
   return (
     <ShopLayout title="Cart - 2" pageDescription="Cart Page - Teslo Shop">
       <>

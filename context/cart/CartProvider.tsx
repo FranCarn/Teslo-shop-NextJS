@@ -4,6 +4,7 @@ import { ICartProduct } from "../../interfaces";
 import Cookie from "js-cookie";
 
 export interface CartInitialState {
+  isLoaded: boolean;
   cart: ICartProduct[];
   numberOfItems: number;
   subTotal: number;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const INITIAL_STATE: CartInitialState = {
+  isLoaded: false,
   cart: [],
   numberOfItems: 0,
   subTotal: 0,
