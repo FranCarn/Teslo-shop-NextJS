@@ -10,6 +10,17 @@ export interface CartInitialState {
   subTotal: number;
   tax: number;
   totalPrice: number;
+  shippingAdress?: ShippingAddress;
+}
+export interface ShippingAddress {
+  firstName: string;
+  lastName: string;
+  address: string;
+  address2?: string;
+  zip: string;
+  city: string;
+  country: string;
+  phone: string;
 }
 
 interface Props {
@@ -23,6 +34,7 @@ const INITIAL_STATE: CartInitialState = {
   subTotal: 0,
   tax: 0,
   totalPrice: 0,
+  shippingAdress: undefined,
 };
 
 export const CartProvider: FC<Props> = ({ children }) => {
@@ -39,6 +51,25 @@ export const CartProvider: FC<Props> = ({ children }) => {
       });
     } catch (error) {
       dispatch({ type: "[CART] - LoadCart from Cookies", payload: [] });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Cookie.get("firstName")) {
+      const shippingAddress = {
+        firstName: Cookie.get("firstName") || "",
+        lastName: Cookie.get("lastName") || "",
+        address: Cookie.get("address") || "",
+        address2: Cookie.get("address2") || "",
+        zip: Cookie.get("zip") || "",
+        city: Cookie.get("city") || "",
+        country: Cookie.get("country") || "",
+        phone: Cookie.get("phone") || "",
+      };
+      dispatch({
+        type: "[CART] - Load Address from Cookies",
+        payload: shippingAddress,
+      });
     }
   }, []);
 
