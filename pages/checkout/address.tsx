@@ -146,10 +146,9 @@ const AddressPage = () => {
             <FormControl fullWidth>
               <TextField
                 select
-                defaultValue={countries[5].code}
+                defaultValue={Cookies.get("country") || countries[1].code}
                 variant="filled"
                 label="country"
-                value={0}
                 {...register("country", {
                   required: "Required field",
                 })}
