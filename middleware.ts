@@ -1,18 +1,35 @@
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { NextFetchEvent, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { jwt } from "./utils";
 
-export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-  if (req.nextUrl.pathname.startsWith("/checkout")) {
-    const { token = "" } = req.cookies as { token?: string };
-    try {
-      await jwt.isValidToken(token);
-      return NextResponse.next();
-    } catch (error) {
-      const loginUrl = new URL(
-        `/auth/login?p=${req.nextUrl.pathname}`,
-        req.nextUrl.origin
-      );
-      return NextResponse.redirect(loginUrl.toString());
-    }
+export async function middleware(request: NextRequest, ev: NextFetchEvent) {
+  const cookies = request.cookies;
+  const previousPage = request.nextUrl.pathname;
+  const token = cookies.get("token");
+
+  let isValidToken = false;
+
+  if (!token) {
+    return NextResponse.redirect(
+      new URL(`/auth/login?p=${previousPage}`, request.url)
+    );
   }
+  try {
+    await jwt.isValidToken(token.toString());
+    isValidToken = true;
+  } catch (error) {
+    return NextResponse.redirect(
+      new URL(`/auth/login?p=${previousPage}`, request.url)
+    );
+  }
+  if (!isValidToken) {
+    return NextResponse.redirect(
+      new URL(`/auth/login?p=${previousPage}`, request.url)
+    );
+  }
+  NextResponse.next();
 }
+
+export const config = {
+  matcher: "/checkout/:path*",
+};
