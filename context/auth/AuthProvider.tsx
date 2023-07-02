@@ -5,7 +5,7 @@ import { tesloApi } from "../../api";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export interface AuthInitialState {
   isLoggedIn: boolean;
@@ -86,9 +86,17 @@ export const AuthProvider: FC<Props> = ({ children }) => {
   };
 
   const logout = () => {
-    Cookies.remove("token");
     Cookies.remove("cart");
-    router.reload();
+    Cookies.remove("firstName");
+    Cookies.remove("lastName");
+    Cookies.remove("address");
+    Cookies.remove("address2");
+    Cookies.remove("zip");
+    Cookies.remove("city");
+    Cookies.remove("country");
+    Cookies.remove("phone");
+    Cookies.remove("token");
+    signOut();
     dispatch({ type: "[AUTH] - Logout" });
   };
 
