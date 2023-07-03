@@ -31,6 +31,18 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET!,
     }),
   ],
+
+  pages: {
+    signIn: "/auth/login",
+    newUser: "/auth/register",
+  },
+
+  session: {
+    maxAge: 2592000,
+    strategy: "jwt",
+    updateAge: 86400,
+  },
+
   callbacks: {
     async jwt({ token, account, user }) {
       if (account) {

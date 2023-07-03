@@ -15,6 +15,8 @@ import { ErrorOutline } from "@mui/icons-material";
 import { validation } from "../../utils";
 import { AuthContext } from "../../context";
 import { useRouter } from "next/router";
+import { getSession, signIn } from "next-auth/react";
+import { GetServerSideProps } from "next";
 
 type FormData = {
   email: string;
@@ -44,7 +46,7 @@ const RegisterPage = () => {
       }, 3000);
       return;
     }
-    router.replace(destination);
+    await signIn("credentials", { email, password });
   };
   return (
     <AuthLayout title="Register">
@@ -130,5 +132,22 @@ const RegisterPage = () => {
     </AuthLayout>
   );
 };
-
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+  const { p = "/" } = query;
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+};
 export default RegisterPage;
