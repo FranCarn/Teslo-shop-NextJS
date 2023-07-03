@@ -1,35 +1,22 @@
-import { NextFetchEvent, NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { jwt } from "./utils";
+import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { NextApiRequest } from "next";
 
-export async function middleware(request: NextRequest, ev: NextFetchEvent) {
-  const cookies = request.cookies;
-  const previousPage = request.nextUrl.pathname;
-  const token = cookies.get("token");
+export async function middleware(req: NextApiRequest) {
+  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  let isValidToken = false;
+  if (!session) {
+    const requestedPage = req.url;
+    const url = new URL("/auth/login", process.env.BASE_URL);
+    url.searchParams.set("p", requestedPage!);
+    return NextResponse.redirect(url.toString());
+  }
 
-  if (!token) {
-    return NextResponse.redirect(
-      new URL(`/auth/login?p=${previousPage}`, request.url)
-    );
-  }
-  try {
-    await jwt.isValidToken(token.toString());
-    isValidToken = true;
-  } catch (error) {
-    return NextResponse.redirect(
-      new URL(`/auth/login?p=${previousPage}`, request.url)
-    );
-  }
-  if (!isValidToken) {
-    return NextResponse.redirect(
-      new URL(`/auth/login?p=${previousPage}`, request.url)
-    );
-  }
-  NextResponse.next();
+  return NextResponse.next();
 }
 
+// See "Matching Paths" below to learn more
 export const config = {
   matcher: ["/checkout/address", "/checkout/summary"],
 };

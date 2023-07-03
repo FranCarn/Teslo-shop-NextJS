@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ShopLayout } from "../../components/layouts";
 import { countries } from "../../utils";
 import {
@@ -42,13 +42,14 @@ const getAddressFromCookies = (): FormData => {
 
 const AddressPage = () => {
   const { updateAddress } = useContext(CartContext);
-
+  const [defaultCountry, setDefaultCountry] = useState("");
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
@@ -59,6 +60,11 @@ const AddressPage = () => {
     router.push("/checkout/summary");
   };
 
+  useEffect(() => {
+    const addressFromCookies = getAddressFromCookies();
+    reset(addressFromCookies);
+    setDefaultCountry(addressFromCookies.country);
+  }, [reset]);
   return (
     <ShopLayout
       title="Addres to checkout"
@@ -146,7 +152,7 @@ const AddressPage = () => {
             <FormControl fullWidth>
               <TextField
                 select
-                defaultValue={Cookies.get("country") || countries[1].code}
+                defaultValue={countries[1].code}
                 variant="filled"
                 label="country"
                 {...register("country", {

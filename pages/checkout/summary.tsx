@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ShopLayout } from "../../components/layouts";
 import {
   Box,
@@ -14,13 +14,25 @@ import { CartList, OrderSummary } from "../../components/cart";
 import NextLink from "next/link";
 import { CartContext } from "../../context";
 import { countries } from "../../utils/countries";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const SummaryPage = () => {
   const { shippingAddress, numberOfItems } = useContext(CartContext);
+  const router = useRouter();
+  const getNameFromCookies = Cookies.get("firstName");
+
+  useEffect(() => {
+    if (!getNameFromCookies) {
+      router.replace("/checkout/address");
+    }
+  }, [getNameFromCookies, router]);
 
   if (!shippingAddress) return <></>;
+
   const { firstName, lastName, city, country, address, phone, zip } =
     shippingAddress;
+
   return (
     <ShopLayout title="Order Summary" pageDescription="Order summary">
       <>
