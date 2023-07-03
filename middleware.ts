@@ -31,5 +31,5 @@ export async function middleware(request: NextRequest, ev: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: "/checkout/:path*",
+  matcher: ["/checkout/address", "/checkout/summary"],
 };
