@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   Grid,
   Link,
   TextField,
@@ -14,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { validation } from "../../utils";
 import { ErrorOutline } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, getProviders } from "next-auth/react";
 import { GetServerSideProps } from "next";
 
 type FormData = {
@@ -31,6 +32,13 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormData>();
   const [showError, setShowError] = useState(false);
+  const [providers, setProviders] = useState<any>({});
+
+  useEffect(() => {
+    getProviders().then((providers) => {
+      setProviders(providers);
+    });
+  }, []);
 
   const onLoginUser = async ({ email, password }: FormData) => {
     await signIn("credentials", { email, password });
@@ -101,6 +109,30 @@ const LoginPage = () => {
               >
                 <Link underline="always">Create account</Link>
               </NextLink>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+            >
+              <Divider sx={{ width: "100%", mb: 2 }} />
+              {Object.values(providers).map((provider: any) => {
+                if (provider.id === "credentials") return <></>;
+                return (
+                  <Button
+                    key={provider.id}
+                    variant="outlined"
+                    fullWidth
+                    color="primary"
+                    sx={{ mb: 1 }}
+                    onClick={() => signIn(provider.id)}
+                  >
+                    {provider.name}
+                  </Button>
+                );
+              })}
             </Grid>
           </Grid>
         </Box>
