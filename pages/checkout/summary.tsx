@@ -18,9 +18,14 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
 const SummaryPage = () => {
-  const { shippingAddress, numberOfItems } = useContext(CartContext);
+  const { shippingAddress, numberOfItems, createOrder } =
+    useContext(CartContext);
   const router = useRouter();
   const getNameFromCookies = Cookies.get("firstName");
+
+  const onCreateOrder = () => {
+    createOrder();
+  };
 
   useEffect(() => {
     if (!getNameFromCookies) {
@@ -76,7 +81,12 @@ const SummaryPage = () => {
                 </Box>
                 <OrderSummary />
                 <Box sx={{ mt: 3 }}>
-                  <Button color="secondary" className="circular-btn" fullWidth>
+                  <Button
+                    color="secondary"
+                    className="circular-btn"
+                    fullWidth
+                    onClick={onCreateOrder}
+                  >
                     Confirm Order
                   </Button>
                 </Box>

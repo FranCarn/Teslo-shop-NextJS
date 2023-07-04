@@ -1,5 +1,5 @@
-import { ICartProduct } from "../../interfaces";
-import { CartInitialState, ShippingAddress } from "./CartProvider";
+import { ICartProduct, ShippingAddress } from "../../interfaces";
+import { CartInitialState } from "./CartProvider";
 
 type UiActionType =
   | {

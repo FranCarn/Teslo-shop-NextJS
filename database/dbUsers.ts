@@ -29,6 +29,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
   if (user) {
     await db.disconnect();
     const { _id, name, email, role } = user;
+
     return { _id, name, email, role };
   }
 

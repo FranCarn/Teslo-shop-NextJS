@@ -1,7 +1,8 @@
 import { FC, useEffect, useReducer } from "react";
 import { CartContext, cartReducer } from "./";
-import { ICartProduct, ShippingAddress } from "../../interfaces";
+import { ICartProduct, IOrder, ShippingAddress } from "../../interfaces";
 import Cookie from "js-cookie";
+import { tesloApi } from "../../api";
 
 export interface CartInitialState {
   isLoaded: boolean;
@@ -84,7 +85,29 @@ export const CartProvider: FC<Props> = ({ children }) => {
   const removeCartProduct = (product: ICartProduct) => {
     dispatch({ type: "[CART] - Remove product in cart", payload: product });
   };
+  const createOrder = async () => {
+    if (!state.shippingAdress) {
+      throw new Error("No shipping address.");
+    }
+    const body: IOrder = {
+      orderItems: state.cart.map((product) => ({
+        ...product,
+        size: product.size!,
+      })),
+      shippingAddress: state.shippingAdress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      totalPrice: state.totalPrice,
+      isPaid: false,
+    };
 
+    try {
+      const { data } = await tesloApi.post("/orders", body);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     try {
       const cookieProducts = Cookie.get("cart")
@@ -149,6 +172,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         updateCartQuantity,
         removeCartProduct,
         updateAddress,
+        createOrder,
       }}
     >
       {children}
