@@ -17,6 +17,7 @@ import { CartContext } from "../../context";
 import { countries } from "../../utils/countries";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { IOrderItem } from "../../interfaces";
 
 const SummaryPage = () => {
   const { shippingAddress, numberOfItems, createOrder } =

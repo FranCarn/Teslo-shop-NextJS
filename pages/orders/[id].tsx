@@ -28,10 +28,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
   const { address, city, country, firstName, lastName, phone, zip } =
     order.shippingAddress;
   return (
-    <ShopLayout
-      title="Order Summary 12312312"
-      pageDescription="Order summary 12312312312"
-    >
+    <ShopLayout title="Order Summary" pageDescription="Order summary">
       <>
         <Typography variant="h1" component="h1">
           Order: {order._id}
@@ -78,11 +75,6 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                 <Typography>{country}</Typography>
                 <Typography>{phone}</Typography>
                 <Divider sx={{ my: 1 }} />
-                <Box display="flex" justifyContent="flex-end">
-                  <NextLink href="/cart" passHref legacyBehavior>
-                    <Link underline="always">Edit</Link>
-                  </NextLink>
-                </Box>
                 <OrderSummary
                   orderValues={{
                     numberOfItems: order.numberOfItems,

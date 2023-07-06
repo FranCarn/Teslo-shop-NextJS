@@ -7,7 +7,6 @@ import {
   FormControl,
   Grid,
   MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -42,7 +41,7 @@ const getAddressFromCookies = (): FormData => {
 
 const AddressPage = () => {
   const { updateAddress } = useContext(CartContext);
-  const [defaultCountry, setDefaultCountry] = useState("");
+
   const router = useRouter();
 
   const {
@@ -63,8 +62,8 @@ const AddressPage = () => {
   useEffect(() => {
     const addressFromCookies = getAddressFromCookies();
     reset(addressFromCookies);
-    setDefaultCountry(addressFromCookies.country);
   }, [reset]);
+
   return (
     <ShopLayout
       title="Addres to checkout"

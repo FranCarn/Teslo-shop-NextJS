@@ -25,7 +25,7 @@ export const OrderSummary: FC<Props> = ({ orderValues }) => {
         <Typography>Products:</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="flex-end">
-        <Typography>{currency.format(summaryValues.numberOfItems)}</Typography>
+        <Typography>{summaryValues.numberOfItems}</Typography>
       </Grid>
       <Grid item xs={6}>
         <Typography>Subtotal</Typography>

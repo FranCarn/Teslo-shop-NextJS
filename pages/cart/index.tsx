@@ -12,6 +12,7 @@ import {
 import { CartList, OrderSummary } from "../../components/cart";
 import { CartContext } from "../../context";
 import { useRouter } from "next/router";
+import { IOrderItem } from "../../interfaces";
 
 const CartPage = () => {
   const { isLoaded, cart } = useContext(CartContext);

@@ -67,7 +67,7 @@ export const cartReducer = (
     case "[CART] - Update Address":
       return {
         ...state,
-        shippingAdress: action.payload,
+        shippingAddress: action.payload,
       };
     case "[CART] - Order complete":
       return {
