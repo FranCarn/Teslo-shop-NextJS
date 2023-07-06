@@ -19,7 +19,8 @@ type UiActionType =
       };
     }
   | { type: "[CART] - Load Address from Cookies"; payload: ShippingAddress }
-  | { type: "[CART] - Update Address"; payload: ShippingAddress };
+  | { type: "[CART] - Update Address"; payload: ShippingAddress }
+  | { type: "[CART] - Order complete" };
 
 export const cartReducer = (
   state: CartInitialState,
@@ -67,6 +68,15 @@ export const cartReducer = (
       return {
         ...state,
         shippingAdress: action.payload,
+      };
+    case "[CART] - Order complete":
+      return {
+        ...state,
+        cart: [],
+        numberOfItems: 0,
+        subTotal: 0,
+        tax: 0,
+        totalPrice: 0,
       };
     default:
       return state;
