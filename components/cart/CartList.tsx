@@ -11,12 +11,13 @@ import {
 import NextLink from "next/link";
 import { ItemCounter } from "../ui";
 import { CartContext } from "../../context";
-import { ICartProduct } from "../../interfaces";
+import { ICartProduct, IOrderItem } from "../../interfaces";
 
 interface Props {
   editable?: boolean;
+  products?: IOrderItem[];
 }
-export const CartList: FC<Props> = ({ editable = false }) => {
+export const CartList: FC<Props> = ({ editable = false, products = [] }) => {
   const { cart, updateCartQuantity, removeCartProduct } =
     useContext(CartContext);
 
@@ -28,10 +29,11 @@ export const CartList: FC<Props> = ({ editable = false }) => {
     product.quantity = newQuantityValue;
     updateCartQuantity(product);
   };
+  const productsToShow = products ? products : cart;
 
   return (
     <>
-      {cart.map((product) => (
+      {productsToShow.map((product) => (
         <Grid
           container
           key={product.slug + product.size}
@@ -61,7 +63,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                 <ItemCounter
                   quantity={product.quantity}
                   onSelectedQuantity={(value) =>
-                    onNewCartQuantityValue(product, value)
+                    onNewCartQuantityValue(product as ICartProduct, value)
                   }
                 />
               ) : (
@@ -83,7 +85,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
               <Button
                 variant="text"
                 color="error"
-                onClick={() => removeCartProduct(product)}
+                onClick={() => removeCartProduct(product as ICartProduct)}
               >
                 Remove
               </Button>
