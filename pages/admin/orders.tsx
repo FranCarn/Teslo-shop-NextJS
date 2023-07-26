@@ -5,6 +5,7 @@ import { Chip, Grid } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import useSWR from "swr";
 import { IOrder, IUser } from "../../interfaces";
+import { currency } from "../../utils";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "Order ID", width: 250 },
@@ -33,7 +34,7 @@ const columns: GridColDef[] = [
     headerName: "See",
     renderCell: ({ row }: GridRenderCellParams) => {
       return (
-        <a href={`admin/orders/${row.id}`} target="_blank" rel="noreferrer">
+        <a href={`/admin/orders/${row.id}`} target="_blank" rel="noreferrer">
           See order
         </a>
       );
@@ -55,7 +56,7 @@ const OrdersPage = () => {
     id: order._id,
     email: (order.user as IUser).email,
     name: (order.user as IUser).name,
-    total: order.totalPrice,
+    totalPrice: currency.format(order.totalPrice),
     isPaid: order.isPaid,
     noProducts: order.numberOfItems,
     createdAt: order.createdAt,
