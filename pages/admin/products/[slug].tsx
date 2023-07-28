@@ -41,8 +41,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
   return (
     <AdminLayout
-      title={"Producto"}
-      subTitle={`Editando: ${product.title}`}
+      title={"Product"}
+      subTitle={`Modifying: ${product.title}`}
       icon={<DriveFileRenameOutline />}
     >
       <form>
