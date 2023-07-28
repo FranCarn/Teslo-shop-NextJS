@@ -1,11 +1,12 @@
 import React from "react";
 import { AdminLayout } from "../../components/layouts";
 import { CategoryOutlined } from "@mui/icons-material";
-import { CardMedia, Grid } from "@mui/material";
+import { CardMedia, Grid, Link } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import useSWR from "swr";
 import { IProduct } from "../../interfaces";
 import { currency } from "../../utils";
+import NextLink from "next/link";
 
 const columns: GridColDef[] = [
   {
@@ -24,7 +25,19 @@ const columns: GridColDef[] = [
       );
     },
   },
-  { field: "title", headerName: "Title", width: 300 },
+  {
+    field: "title",
+    headerName: "Title",
+    width: 300,
+    renderCell: ({ row }: GridRenderCellParams) => {
+      return (
+        <NextLink href={`/admin/products/${row.slug}`} passHref legacyBehavior>
+          <Link underline="always">{row.title}</Link>
+        </NextLink>
+      );
+    },
+  },
+
   { field: "gender", headerName: "Gender" },
   { field: "type", headerName: "Type" },
   { field: "inStock", headerName: "Inventory" },
