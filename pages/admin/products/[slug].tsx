@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { AdminLayout } from "../../../components/layouts";
 import { IProduct } from "../../../interfaces";
@@ -62,7 +62,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   } = useForm<FormData>({
     defaultValues: product,
   });
-
+  const [newTagValue, setNewTagValue] = useState("");
   const onSizeChange = (size: string) => {
     const currentSizes = getValues("sizes");
     if (currentSizes.includes(size)) {
@@ -75,7 +75,18 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     setValue("sizes", [...currentSizes, size], { shouldValidate: true });
   };
 
-  const onDeleteTag = (tag: string) => {};
+  const onDeleteTag = (tag: string) => {
+    const updatedTags = getValues("tags").filter((t) => t !== tag);
+    setValue("tags", updatedTags, { shouldValidate: true });
+  };
+
+  const onNewTag = () => {
+    const newTag = newTagValue.trim().toLowerCase();
+    setNewTagValue("");
+    const currentTags = getValues("tags");
+    if (currentTags.includes(newTag)) return;
+    currentTags.push(newTag);
+  };
 
   const formSubmit = (form: FormData) => {};
 
@@ -246,11 +257,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             />
 
             <TextField
-              label="labels"
+              label="Labels"
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
               helperText="Press [spacebar] to add"
+              value={newTagValue}
+              onChange={({ target }) => setNewTagValue(target.value)}
+              onKeyUp={({ code }) =>
+                code === "Space" ? onNewTag() : undefined
+              }
             />
 
             <Box
@@ -263,7 +279,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               }}
               component="ul"
             >
-              {product.tags.map((tag) => {
+              {getValues("tags").map((tag) => {
                 return (
                   <Chip
                     key={tag}
