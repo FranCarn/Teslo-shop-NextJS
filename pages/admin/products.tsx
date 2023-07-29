@@ -47,7 +47,7 @@ const columns: GridColDef[] = [
 
 const ProductsPage = () => {
   const { data, error } = useSWR<IProduct[]>("/api/admin/products");
-
+    
   if (!data && !error) return <></>;
 
   const rows = data!.map((product) => ({

@@ -27,17 +27,42 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
+import { useForm } from "react-hook-form";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
 const validSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+interface FormData {
+  _id?: string;
+  description: string;
+  images: string[];
+  inStock: number;
+  price: number;
+  sizes: string[];
+  slug: string;
+  tags: string[];
+  title: string;
+  type: string;
+  gender: string;
+}
 
 interface Props {
   product: IProduct;
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: product,
+  });
+
   const onDeleteTag = (tag: string) => {};
+
+  const formSubmit = (form: FormData) => {};
 
   return (
     <AdminLayout
@@ -45,7 +70,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
       subTitle={`Modifying: ${product.title}`}
       icon={<DriveFileRenameOutline />}
     >
-      <form>
+      <form onSubmit={handleSubmit(formSubmit)}>
         <Box display="flex" justifyContent="end" sx={{ mb: 1 }}>
           <Button
             color="secondary"
@@ -65,12 +90,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
-              // { ...register('name', {
-              //     required: 'Este campo es requerido',
-              //     minLength: { value: 2, message: 'Mínimo 2 caracteres' }
-              // })}
-              // error={ !!errors.name }
-              // helperText={ errors.name?.message }
+              {...register("title", {
+                required: "Field required",
+                minLength: { value: 2, message: "Two characters minimum" },
+              })}
+              error={!!errors.title}
+              helperText={errors.title?.message}
             />
 
             <TextField
@@ -79,6 +104,11 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               fullWidth
               multiline
               sx={{ mb: 1 }}
+              {...register("description", {
+                required: "Field required",
+              })}
+              error={!!errors.description}
+              helperText={errors.description?.message}
             />
 
             <TextField
@@ -87,6 +117,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
+              {...register("inStock", {
+                required: "Field required",
+                min: { value: 0, message: "0 is minimum value" },
+              })}
+              error={!!errors.inStock}
+              helperText={errors.inStock?.message}
             />
 
             <TextField
@@ -95,6 +131,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
+              {...register("price", {
+                required: "Field required",
+                min: { value: 0, message: "0 is minimum value" },
+              })}
+              error={!!errors.price}
+              helperText={errors.price?.message}
             />
 
             <Divider sx={{ my: 1 }} />
@@ -154,6 +196,15 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
+              {...register("slug", {
+                required: "Field required",
+                validate: (val) =>
+                  val.trim().includes(" ")
+                    ? "Slug can't contain spaces"
+                    : undefined,
+              })}
+              error={!!errors.slug}
+              helperText={errors.slug?.message}
             />
 
             <TextField
@@ -161,7 +212,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant="filled"
               fullWidth
               sx={{ mb: 1 }}
-              helperText="Presiona [spacebar] para agregar"
+              helperText="Press [spacebar] to add"
             />
 
             <Box
