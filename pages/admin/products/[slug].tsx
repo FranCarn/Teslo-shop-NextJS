@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { AdminLayout } from "../../../components/layouts";
 import { IProduct } from "../../../interfaces";
@@ -58,6 +58,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     formState: { errors },
     getValues,
     setValue,
+    watch,
   } = useForm<FormData>({
     defaultValues: product,
   });
@@ -77,6 +78,22 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   const onDeleteTag = (tag: string) => {};
 
   const formSubmit = (form: FormData) => {};
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "title") {
+        const newSlug =
+          value.title
+            ?.trim()
+            .replaceAll(" ", "_")
+            .replaceAll("'", "")
+            .toLowerCase() || "";
+        setValue("slug", newSlug);
+      } else return;
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
 
   return (
     <AdminLayout
