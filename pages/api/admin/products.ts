@@ -22,7 +22,7 @@ export default function handler(
       return updateProduct(req, res);
 
     case "POST":
-      return;
+      return createProduct(req, res);
 
     default:
       return res.status(400).json({ message: "Bad request" });
@@ -69,10 +69,51 @@ const updateProduct = async (
     await product.update(req.body);
 
     await db.disconnect();
+
     return res.status(200).json(product);
   } catch (error) {
     console.log(error);
+
     await db.disconnect();
-    return res.status(400).json({ message: "Error message in server console" });
+
+    return res.status(400).json({ message: "Check server logs" });
+  }
+};
+const createProduct = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { images = [] } = req.body as IProduct;
+
+  if (images.length < 2) {
+    return res.status(400).json({ message: "It is necessary two images" });
+  }
+
+  // TODO: eval case localhost:3000/products/img.jpg to avoid
+
+  try {
+    await db.connect();
+
+    const productInDb = await Product.findOne({ slug: req.body.slug });
+
+    if (productInDb) {
+      return res
+        .status(400)
+        .json({ message: "Product with this slug already exist" });
+    }
+
+    const product = new Product(req.body);
+
+    await product.save();
+
+    await db.disconnect();
+
+    return res.status(201).json(product);
+  } catch (error) {
+    await db.disconnect();
+
+    console.log(error);
+
+    return res.status(400).json({ message: "Check server logs" });
   }
 };
