@@ -28,6 +28,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { tesloApi } from "../../../api";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
@@ -63,6 +64,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     defaultValues: product,
   });
   const [newTagValue, setNewTagValue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const onSizeChange = (size: string) => {
     const currentSizes = getValues("sizes");
     if (currentSizes.includes(size)) {
@@ -88,7 +90,27 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     currentTags.push(newTag);
   };
 
-  const formSubmit = (form: FormData) => {};
+  const formSubmit = async (form: FormData) => {
+    if (isSaving) return;
+    if (form.images.length < 2) return alert("It is necessary to 2 images");
+    setIsSaving(true);
+    try {
+      const { data } = await tesloApi({
+        url: "/admin/products",
+        method: "PUT", // TODO: eval if object has _id, if hasn't mothod is post.
+        data: form,
+      });
+
+      if (!form._id) {
+        //TODO: refresh page
+      } else {
+        setIsSaving(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
@@ -119,6 +141,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             startIcon={<SaveOutlined />}
             sx={{ width: "150px" }}
             type="submit"
+            disabled={isSaving}
           >
             Guardar
           </Button>

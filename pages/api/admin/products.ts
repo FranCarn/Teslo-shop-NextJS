@@ -49,8 +49,8 @@ const updateProduct = async (
     return res.status(400).json({ message: "Invalid product ID" });
   }
 
-  if (images.length <= 2) {
-    return res.status(400).json({ message: "Is necessary two images" });
+  if (images.length < 2) {
+    return res.status(400).json({ message: "It is necessary two images" });
   }
 
   // TODO: eval case localhost:3000/products/img.jpg to avoid
