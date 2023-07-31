@@ -1,7 +1,7 @@
 import React from "react";
 import { AdminLayout } from "../../components/layouts";
-import { CategoryOutlined } from "@mui/icons-material";
-import { CardMedia, Grid, Link } from "@mui/material";
+import { AddOutlined, CategoryOutlined } from "@mui/icons-material";
+import { Box, Button, CardMedia, Grid, Link } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import useSWR from "swr";
 import { IProduct } from "../../interfaces";
@@ -47,7 +47,7 @@ const columns: GridColDef[] = [
 
 const ProductsPage = () => {
   const { data, error } = useSWR<IProduct[]>("/api/admin/products");
-    
+
   if (!data && !error) return <></>;
 
   const rows = data!.map((product) => ({
@@ -67,11 +67,22 @@ const ProductsPage = () => {
       subTitle="Products maintenance"
       icon={<CategoryOutlined />}
     >
-      <Grid container className="fadeIn">
-        <Grid item xs={12} sx={{ height: 650, width: "100%" }}>
-          <DataGrid rows={rows} columns={columns} pageSizeOptions={[10]} />
+      <>
+        <Box display="flex" justifyContent="end" sx={{ mb: 2 }}>
+          <Button
+            startIcon={<AddOutlined />}
+            color="secondary"
+            href="/admin/products/new"
+          >
+            New product
+          </Button>
+        </Box>
+        <Grid container className="fadeIn">
+          <Grid item xs={12} sx={{ height: 650, width: "100%" }}>
+            <DataGrid rows={rows} columns={columns} pageSizeOptions={[10]} />
+          </Grid>
         </Grid>
-      </Grid>
+      </>
     </AdminLayout>
   );
 };

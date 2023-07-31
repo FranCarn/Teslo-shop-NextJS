@@ -29,6 +29,8 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { tesloApi } from "../../../api";
+import { Product } from "../../../models";
+import { useRouter } from "next/router";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
@@ -63,6 +65,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   } = useForm<FormData>({
     defaultValues: product,
   });
+  const router = useRouter();
   const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const onSizeChange = (size: string) => {
@@ -97,12 +100,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     try {
       const { data } = await tesloApi({
         url: "/admin/products",
-        method: "PUT", // TODO: eval if object has _id, if hasn't mothod is post.
+        method: form._id ? "PUT" : "POST",
         data: form,
       });
 
       if (!form._id) {
-        //TODO: refresh page
+        router.replace(`/admin/products/${form.slug}`);
       } else {
         setIsSaving(false);
       }
@@ -364,8 +367,17 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = "" } = query;
+  let product: IProduct | null;
 
-  const product = await dbProducts.getProductBySlug(slug.toString());
+  if (slug === "new") {
+    const tempProduct = JSON.parse(JSON.stringify(new Product()));
+    delete tempProduct._id;
+    tempProduct.images = ["img1.jpg", "img2.jpg"];
+
+    product = tempProduct;
+  } else {
+    product = await dbProducts.getProductBySlug(slug.toString());
+  }
 
   if (!product) {
     return {
