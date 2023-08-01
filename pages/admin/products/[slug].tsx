@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { AdminLayout } from "../../../components/layouts";
 import { IProduct } from "../../../interfaces";
@@ -66,6 +66,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     defaultValues: product,
   });
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const onSizeChange = (size: string) => {
@@ -92,7 +93,17 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     if (currentTags.includes(newTag)) return;
     currentTags.push(newTag);
   };
+  const onFileSelected = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    if (!target.files) return;
 
+    try {
+      for (const file of target.files) {
+        const formData = new FormData();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const formSubmit = async (form: FormData) => {
     if (isSaving) return;
     if (form.images.length < 2) return alert("It is necessary to 2 images");
@@ -328,10 +339,18 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 fullWidth
                 startIcon={<UploadOutlined />}
                 sx={{ mb: 3 }}
+                onClick={() => fileInputRef.current?.click()}
               >
                 Upload image
               </Button>
-
+              <input
+                type="file"
+                multiple
+                accept="image/png, image/gif, image/jpg, image/jpeg"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={onFileSelected}
+              />
               <Chip
                 label="It is necessary to 2 images"
                 color="error"
