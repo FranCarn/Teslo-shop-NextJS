@@ -18,14 +18,12 @@ export const ProductSlideshow: FC<Props> = ({ images }) => {
   return (
     <Slide easing="ease" duration={4000} indicators>
       {images.map((img) => {
-        const url = `/products/${img}`;
-
         return (
           <div key={img}>
             <div
               style={{
                 ...divStyle,
-                backgroundImage: `url(${url})`,
+                backgroundImage: `url(${img})`,
                 backgroundSize: "cover",
               }}
             ></div>

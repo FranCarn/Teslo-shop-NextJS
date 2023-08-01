@@ -65,6 +65,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   } = useForm<FormData>({
     defaultValues: product,
   });
+
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [newTagValue, setNewTagValue] = useState("");
@@ -93,17 +94,35 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     if (currentTags.includes(newTag)) return;
     currentTags.push(newTag);
   };
-  const onFileSelected = ({ target }: ChangeEvent<HTMLInputElement>) => {
+
+  const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (!target.files) return;
 
     try {
       for (const file of target.files) {
         const formData = new FormData();
+        formData.append("file", file);
+        const { data } = await tesloApi.post<{ message: string }>(
+          "/admin/upload",
+          formData
+        );
+        setValue("images", [...getValues("images"), data.message], {
+          shouldValidate: true,
+        });
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  const deleteImage = (image: string) => {
+    setValue(
+      "images",
+      getValues("images").filter((img) => img !== image),
+      { shouldValidate: true }
+    );
+  };
+
   const formSubmit = async (form: FormData) => {
     if (isSaving) return;
     if (form.images.length < 2) return alert("It is necessary to 2 images");
@@ -351,14 +370,18 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 ref={fileInputRef}
                 onChange={onFileSelected}
               />
+
               <Chip
                 label="It is necessary to 2 images"
                 color="error"
                 variant="outlined"
+                sx={{
+                  display: getValues("images").length < 2 ? "flex" : "none",
+                }}
               />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues("images").map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card>
                       <CardMedia
@@ -368,7 +391,11 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                         alt={img}
                       />
                       <CardActions>
-                        <Button fullWidth color="error">
+                        <Button
+                          fullWidth
+                          color="error"
+                          onClick={() => deleteImage(img)}
+                        >
                           Delete
                         </Button>
                       </CardActions>

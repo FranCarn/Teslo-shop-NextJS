@@ -3,6 +3,9 @@ import { IProduct } from "../../../interfaces/products";
 import Product from "../../../models/product";
 import { db } from "../../../database/";
 import { isValidObjectId } from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config(process.env.CLOUDINARY_URL || "");
 
 type Data =
   | {
@@ -35,9 +38,16 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   await db.disconnect();
 
-  // TODO: update images;
+  const updatedProducts = products.map((product) => {
+    product.images = product.images.map((image) => {
+      return image.includes("http")
+        ? image
+        : `${process.env.HOST_NAME}products/${image}`;
+    });
+    return product;
+  });
 
-  return res.status(200).json(products);
+  return res.status(200).json(updatedProducts);
 };
 const updateProduct = async (
   req: NextApiRequest,
@@ -64,7 +74,14 @@ const updateProduct = async (
       return res.status(400).json({ message: "Product doesnt exist" });
     }
 
-    // TODO: delete images in Cloudinary
+    product.images.forEach(async (image) => {
+      if (!images.includes(image)) {
+        const [fileId, extension] = image
+          .substring(image.lastIndexOf("/") + 1)
+          .split(".");
+        await cloudinary.uploader.destroy(fileId);
+      }
+    });
 
     await product.update(req.body);
 

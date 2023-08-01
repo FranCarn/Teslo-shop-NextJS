@@ -16,6 +16,8 @@
     "@paypal/react-paypal-js": "^8.1.0",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.40.0",
+    "formidable": "^3.5.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.2.1",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/formidable": "^3.4.0",
     "@types/js-cookie": "^3.0.3",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "20.3.1",
