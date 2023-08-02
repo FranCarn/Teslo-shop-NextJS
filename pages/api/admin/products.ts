@@ -63,7 +63,6 @@ const updateProduct = async (
     return res.status(400).json({ message: "It is necessary two images" });
   }
 
-  // TODO: eval case localhost:3000/products/img.jpg to avoid
   try {
     await db.connect();
 
@@ -105,8 +104,6 @@ const createProduct = async (
   if (images.length < 2) {
     return res.status(400).json({ message: "It is necessary two images" });
   }
-
-  // TODO: eval case localhost:3000/products/img.jpg to avoid
 
   try {
     await db.connect();
