@@ -40,7 +40,6 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     });
     return product;
   });
-  console.log(updatedProducts);
   await db.disconnect();
   return res.json(updatedProducts);
 };
