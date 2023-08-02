@@ -37,7 +37,7 @@ export const Navbar = () => {
       <Toolbar>
         <NextLink href="/" passHref legacyBehavior>
           <Link display="flex" alignItems="center">
-            <Typography variant="h6">Tesla |</Typography>
+            <Typography variant="h6">Teslo |</Typography>
             <Typography sx={{ ml: 0.5, mt: 0.5 }}>Shop</Typography>
           </Link>
         </NextLink>
